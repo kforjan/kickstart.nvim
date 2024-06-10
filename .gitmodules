@@ -1,0 +1,3 @@
+[submodule "lua/snippets/vs_code/awesome-flutter-snippets"]
+	path = lua/snippets/vs_code/awesome-flutter-snippets
+	url = https://github.com/Nash0x7E2/awesome-flutter-snippets

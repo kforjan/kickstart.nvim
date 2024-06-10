@@ -246,7 +246,9 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       'stevearc/dressing.nvim', -- optional for vim.ui.select
     },
-    config = true,
+    config = function()
+      require('flutter-tools').setup {}
+    end,
   },
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -297,7 +299,42 @@ require('lazy').setup({
       }
     end,
   },
+  {
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local harpoon = require 'harpoon'
 
+      vim.keymap.set('n', '<leader>a', function()
+        harpoon:list():add()
+      end)
+      vim.keymap.set('n', '<C-e>', function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end)
+
+      vim.keymap.set('n', '<leader>ha', function()
+        harpoon:list():select(1)
+      end)
+      vim.keymap.set('n', '<leader>hs', function()
+        harpoon:list():select(2)
+      end)
+      vim.keymap.set('n', '<leader>hd', function()
+        harpoon:list():select(3)
+      end)
+      vim.keymap.set('n', '<leader>hf', function()
+        harpoon:list():select(4)
+      end)
+
+      -- Toggle previous & next buffers stored within Harpoon list
+      vim.keymap.set('n', '<C-S-P>', function()
+        harpoon:list():prev()
+      end)
+      vim.keymap.set('n', '<C-S-N>', function()
+        harpoon:list():next()
+      end)
+    end,
+  },
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -560,7 +597,6 @@ require('lazy').setup({
         -- But for many setups, the LSP (`tsserver`) will work just fine
         -- tsserver = {},
         --
-
         lua_ls = {
           -- cmd = {...},
           -- filetypes = { ...},
@@ -652,6 +688,16 @@ require('lazy').setup({
       -- Snippet Engine & its associated nvim-cmp source
       {
         'L3MON4D3/LuaSnip',
+        config = function()
+          require('luasnip').config.set_config {
+            history = true,
+            updateevents = 'TextChanged,TextChangedI',
+          }
+          require('luasnip.loaders.from_lua').load { paths = { '~/.config/nvim/lua/snippets/lua' } }
+          require('luasnip.loaders.from_vscode').lazy_load {
+            paths = { '~/.config/nvim/lua/snippets/vs_code/awesome-flutter-snippets' },
+          }
+        end,
         build = (function()
           -- Build Step is needed for regex support in snippets.
           -- This step is not supported in many windows environments.
